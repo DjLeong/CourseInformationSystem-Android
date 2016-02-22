@@ -1,4 +1,4 @@
-package com.dehua.courseinformationsystem;
+package com.dehua.courseinformationsystem.settingfragment;
 
 
 import android.annotation.TargetApi;
@@ -20,6 +20,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+
+import com.dehua.courseinformationsystem.R;
 
 import java.util.List;
 

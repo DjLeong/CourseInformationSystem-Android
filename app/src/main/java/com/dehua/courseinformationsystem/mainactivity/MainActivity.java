@@ -1,4 +1,4 @@
-package com.dehua.courseinformationsystem;
+package com.dehua.courseinformationsystem.mainactivity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -16,9 +16,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.dehua.courseinformationsystem.constants.FragmentPosition;
+import com.dehua.courseinformationsystem.fragment.AnnouncementFragment;
+import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
+import com.dehua.courseinformationsystem.fragment.DownloadFragment;
+import com.dehua.courseinformationsystem.R;
+import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
+import com.dehua.courseinformationsystem.utils.FragmentController;
+
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,AnnouncementFragment.OnFragmentInteractionListener,AttendanceFragment.OnFragmentInteractionListener,
-        DownloadFragment.OnFragmentInteractionListener,SendFragment.OnFragmentInteractionListener,ShareFragment.OnFragmentInteractionListener{
+        DownloadFragment.OnFragmentInteractionListener {
+
+    private FragmentController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +44,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        controller=FragmentController.getInstance(this,R.id.content);
 
-        if(savedInstanceState==null){
-            getSupportFragmentManager().beginTransaction().add(R.id.content,new AnnouncementFragment()).commit();
-        }
+        controller.showFragment(FragmentPosition.Announcement.ordinal());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +65,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        getJSONVolley();
     }
 
     @Override
@@ -91,29 +109,23 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch(id) {
             case R.id.nav_announcement :
-                this.getSupportFragmentManager().beginTransaction().replace(R.id.content, new AnnouncementFragment()).commit();
+                controller.showFragment(FragmentPosition.Announcement.ordinal());
                 if (toolbar != null) {
                     toolbar.setTitle("Announcement");
                 }
                 break;
             case R.id.nav_attendance :
-                this.getSupportFragmentManager().beginTransaction().replace(R.id.content, new AttendanceFragment()).commit();
+                controller.showFragment(FragmentPosition.Attendance.ordinal());
                 if (toolbar != null) {
                     toolbar.setTitle("Attendance");
                 }
                 break;
             case R.id.nav_download:
-                this.getSupportFragmentManager().beginTransaction().replace(R.id.content, new DownloadFragment()).commit();
+                controller.showFragment(FragmentPosition.Download.ordinal());
                 if (toolbar != null) {
                     toolbar.setTitle("Download");
                 }
                 break;
- /*         case R.id.nav_share:
-                this.getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.content, new ShareFragment()).commit();
-                break;
-            case R.id.nav_send:
-                this.getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.content, new SendFragment()).commit();
-                break;*/
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -125,6 +137,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void getJSONVolley(){
+        RequestQueue requestQueue= Volley.newRequestQueue(this);
+        String JSONUrl="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json";
+        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("response=" + response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("error");
+                    }
+                }
+        );
+        requestQueue.add(jsonObjectRequest);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.dehua.courseinformationsystem;
+package com.dehua.courseinformationsystem.settingfragment;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
