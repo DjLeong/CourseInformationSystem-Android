@@ -22,9 +22,7 @@ public class FragmentController {
     private static FragmentController controller;
 
     public static FragmentController getInstance(FragmentActivity activity,int containerId) {
-        if(controller==null){
-            controller=new FragmentController(activity,containerId);
-        }
+        controller=new FragmentController(activity,containerId);
         return controller;
     }
 
@@ -44,7 +42,7 @@ public class FragmentController {
         for(Fragment fragment:fragments){
             ft.add(containerId,fragment);
         }
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     public void showFragment(int position){
@@ -52,7 +50,7 @@ public class FragmentController {
         Fragment fragment =fragments.get(position);
         FragmentTransaction ft=fragmentManager.beginTransaction();
         ft.show(fragment);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     public void hideFragments(){
@@ -62,7 +60,7 @@ public class FragmentController {
                 ft.hide(fragment);
             }
         }
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     public Fragment getFragment(int position){

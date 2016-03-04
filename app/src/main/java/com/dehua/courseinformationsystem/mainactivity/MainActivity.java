@@ -20,6 +20,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.constants.FragmentPosition;
@@ -30,6 +31,7 @@ import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
 import com.dehua.courseinformationsystem.utils.FragmentController;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity
@@ -44,9 +46,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        controller=FragmentController.getInstance(this,R.id.content);
-
+        controller = FragmentController.getInstance(this, R.id.content);
         controller.showFragment(FragmentPosition.Announcement.ordinal());
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +68,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         getJSONVolley();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
     }
 
     @Override
@@ -141,11 +147,11 @@ public class MainActivity extends AppCompatActivity
 
     public void getJSONVolley(){
         RequestQueue requestQueue= Volley.newRequestQueue(this);
-        String JSONUrl="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json";
-        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
-                new Response.Listener<JSONObject>() {
+        String JSONUrl="http://172.16.112.131/CourseInformationSystem-Server/getJSON.html";
+        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONArray response) {
                         System.out.println("response=" + response);
                     }
                 },
@@ -156,7 +162,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
         );
-        requestQueue.add(jsonObjectRequest);
+        requestQueue.add(jsonArrayRequest);
     }
 
 }
