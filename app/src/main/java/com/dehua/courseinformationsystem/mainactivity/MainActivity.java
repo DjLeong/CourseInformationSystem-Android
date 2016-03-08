@@ -38,11 +38,13 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,AnnouncementFragment.OnFragmentInteractionListener,AttendanceFragment.OnFragmentInteractionListener,
         DownloadFragment.OnFragmentInteractionListener {
 
+    private static MainActivity instance;
     private FragmentController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance=this;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -67,7 +69,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        getJSONVolley();
+    }
+
+    public static MainActivity getInstance(){
+        return instance;
     }
 
     @Override
@@ -117,7 +122,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_announcement :
                 controller.showFragment(FragmentPosition.Announcement.ordinal());
                 if (toolbar != null) {
-                    toolbar.setTitle("Announcement");
+                    toolbar.setTitle("AnnouncementBean");
                 }
                 break;
             case R.id.nav_attendance :
@@ -143,26 +148,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
-    }
-
-    public void getJSONVolley(){
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
-        String JSONUrl="http://172.16.112.131/CourseInformationSystem-Server/getJSON.html";
-        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        System.out.println("response=" + response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.out.println("error");
-                    }
-                }
-        );
-        requestQueue.add(jsonArrayRequest);
     }
 
 }

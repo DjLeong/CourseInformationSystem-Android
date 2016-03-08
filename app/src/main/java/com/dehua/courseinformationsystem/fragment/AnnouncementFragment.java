@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dehua.courseinformationsystem.R;
+import com.dehua.courseinformationsystem.data.Announcement;
 import com.dehua.courseinformationsystem.utils.AnnouncementAdapter;
 
 
