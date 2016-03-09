@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dehua.courseinformationsystem.R;
-import com.dehua.courseinformationsystem.data.Announcement;
 import com.dehua.courseinformationsystem.data.AnnouncementBean;
 
 import java.util.ArrayList;
@@ -17,16 +16,23 @@ import java.util.ArrayList;
  */
 public class AnnouncementAdapter extends RecyclerView.Adapter {
 
+    private ArrayList<AnnouncementBean> announcementList;
+    private int arraySize;
+
+    public AnnouncementAdapter(ArrayList<AnnouncementBean> list) {
+        announcementList=list;
+        arraySize=announcementList.size();
+    }
+
     class AnnouncementItemHolder extends RecyclerView.ViewHolder {
 
-        View view;
-        TextView course,title,content;
+        TextView course, title, content;
 
         public AnnouncementItemHolder(View view) {
             super(view);
-            course=(TextView) view.findViewById(R.id.announcement_item_course);
-            title= (TextView) view.findViewById(R.id.announcement_item_title);
-            content= (TextView) view.findViewById(R.id.announcement_item_content);
+            course = (TextView) view.findViewById(R.id.announcement_item_course);
+            title = (TextView) view.findViewById(R.id.announcement_item_title);
+            content = (TextView) view.findViewById(R.id.announcement_item_content);
         }
 
         public TextView getCourse() {
@@ -44,13 +50,13 @@ public class AnnouncementAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new AnnouncementItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.announcement_item_list,parent,false));
+        return new AnnouncementItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.announcement_item_list, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AnnouncementItemHolder vh = (AnnouncementItemHolder) holder;
-        AnnouncementBean announcement=announcementList.get(position);
+        AnnouncementBean announcement = announcementList.get(position);
         vh.getCourse().setText(announcement.getCourse());
         vh.getTitle().setText(announcement.getTitle());
         vh.getContent().setText(announcement.getContent());
@@ -58,8 +64,6 @@ public class AnnouncementAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return announcementList.size();
+        return arraySize;
     }
-
-    private ArrayList<AnnouncementBean> announcementList=new Announcement().getAnnouncement();
 }

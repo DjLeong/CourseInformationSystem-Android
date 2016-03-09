@@ -2,17 +2,34 @@ package com.dehua.courseinformationsystem.fragment;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
-import com.dehua.courseinformationsystem.data.Announcement;
+import com.dehua.courseinformationsystem.data.AnnouncementBean;
+import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.dehua.courseinformationsystem.utils.AnnouncementAdapter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 /**
@@ -38,6 +55,7 @@ public class AnnouncementFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public AnnouncementFragment() {
         // Required empty public constructor
@@ -79,8 +97,57 @@ public class AnnouncementFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(new AnnouncementAdapter());
+        getJSONVolley();
+        swipeRefreshLayout= (SwipeRefreshLayout) view.findViewById(R.id.announcement_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+ /*               swipeRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },1500);*/
+                RefreshData();
+            }
+        });
         return view;
+    }
+
+    private void RefreshData() {
+        new AsyncTask<String,Void,String>(){
+
+            @Override
+            protected String doInBackground(String... params) {
+                return null;
+            }
+        }.execute();
+    }
+
+    private ArrayList<AnnouncementBean> list=new ArrayList<>();
+
+    private void getJSONVolley() {
+        final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        String JSONUrl = "http://172.16.112.131/CourseInformationSystem-Server/getJSON.html";
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Gson gson = new Gson();
+                        Type listType = new TypeToken<ArrayList<AnnouncementBean>>() {
+                        }.getType();
+                        list = gson.fromJson(response.toString(), listType);
+                        mRecyclerView.setAdapter(new AnnouncementAdapter(list));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("volley", "error");
+                    }
+                }
+        );
+        requestQueue.add(jsonArrayRequest);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
