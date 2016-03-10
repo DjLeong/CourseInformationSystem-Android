@@ -50,6 +50,8 @@ public class AnnouncementFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private static final String TAG="AnnouncementFragment";
+
     private OnFragmentInteractionListener mListener;
 
     private RecyclerView mRecyclerView;
@@ -102,12 +104,6 @@ public class AnnouncementFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
- /*               swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                },1500);*/
                 RefreshData();
             }
         });
@@ -119,7 +115,14 @@ public class AnnouncementFragment extends Fragment {
 
             @Override
             protected String doInBackground(String... params) {
+                getJSONVolley();
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                swipeRefreshLayout.setRefreshing(false);
+                super.onPostExecute(s);
             }
         }.execute();
     }
@@ -143,7 +146,7 @@ public class AnnouncementFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("volley", "error");
+                        Log.i(TAG, "volley error");
                     }
                 }
         );

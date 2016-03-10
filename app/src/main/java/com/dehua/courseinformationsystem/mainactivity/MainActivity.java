@@ -16,35 +16,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.constants.FragmentPosition;
 import com.dehua.courseinformationsystem.fragment.AnnouncementFragment;
 import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
 import com.dehua.courseinformationsystem.fragment.DownloadFragment;
-import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
 import com.dehua.courseinformationsystem.utils.FragmentController;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import cn.jpush.android.api.JPushInterface;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,AnnouncementFragment.OnFragmentInteractionListener,AttendanceFragment.OnFragmentInteractionListener,
+        implements NavigationView.OnNavigationItemSelectedListener, AnnouncementFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener,
         DownloadFragment.OnFragmentInteractionListener {
 
     private static MainActivity instance;
     private FragmentController controller;
 
+    //jPUSH test
+    public static boolean isForeground = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        instance=this;
+        instance = this;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -69,9 +64,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //test Jpush SDK
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
     }
 
-    public static MainActivity getInstance(){
+    public static MainActivity getInstance() {
         return instance;
     }
 
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this,SettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -116,16 +115,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        ActionBar toolbar=getSupportActionBar();
+        ActionBar toolbar = getSupportActionBar();
         int id = item.getItemId();
-        switch(id) {
-            case R.id.nav_announcement :
+        switch (id) {
+            case R.id.nav_announcement:
                 controller.showFragment(FragmentPosition.Announcement.ordinal());
                 if (toolbar != null) {
                     toolbar.setTitle("AnnouncementBean");
                 }
                 break;
-            case R.id.nav_attendance :
+            case R.id.nav_attendance:
                 controller.showFragment(FragmentPosition.Attendance.ordinal());
                 if (toolbar != null) {
                     toolbar.setTitle("Attendance");
