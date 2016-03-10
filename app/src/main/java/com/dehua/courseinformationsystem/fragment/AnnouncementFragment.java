@@ -119,7 +119,14 @@ public class AnnouncementFragment extends Fragment {
 
             @Override
             protected String doInBackground(String... params) {
+                getJSONVolley();
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                swipeRefreshLayout.setRefreshing(false);
+                super.onPostExecute(s);
             }
         }.execute();
     }

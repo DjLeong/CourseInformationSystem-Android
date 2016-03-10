@@ -5,8 +5,9 @@
     android:layout_height="90dp"
     android:layout_marginBottom="0.4dp"
     android:layout_marginTop="0dp"
-    cardView:cardCornerRadius="2dp"
-    cardView:elevation="1dp">
+    cardView:elevation="1dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <RelativeLayout
         android:layout_width="match_parent"

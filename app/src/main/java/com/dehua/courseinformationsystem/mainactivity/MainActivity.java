@@ -1,6 +1,9 @@
 package com.dehua.courseinformationsystem.mainactivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -34,12 +37,17 @@ import com.dehua.courseinformationsystem.utils.FragmentController;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cn.jpush.android.api.JPushInterface;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,AnnouncementFragment.OnFragmentInteractionListener,AttendanceFragment.OnFragmentInteractionListener,
         DownloadFragment.OnFragmentInteractionListener {
 
     private static MainActivity instance;
     private FragmentController controller;
+
+    //jPUSH test
+    public static boolean isForeground = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //test Jpush SDK
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
     }
 
     public static MainActivity getInstance(){
