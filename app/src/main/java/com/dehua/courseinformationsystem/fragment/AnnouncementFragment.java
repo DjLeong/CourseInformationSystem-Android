@@ -131,7 +131,7 @@ public class AnnouncementFragment extends Fragment {
 
     private void getJSONVolley() {
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
-        String JSONUrl = "http://172.16.112.131/CourseInformationSystem-Server/getJSON.html";
+        String JSONUrl = "http://172.16.112.131/CourseInformationSystem-Server/GetJSON";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
                 new Response.Listener<JSONArray>() {
                     @Override
