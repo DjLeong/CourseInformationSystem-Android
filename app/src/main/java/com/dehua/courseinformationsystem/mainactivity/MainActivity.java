@@ -15,9 +15,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.constants.FragmentPosition;
@@ -26,6 +29,8 @@ import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
 import com.dehua.courseinformationsystem.fragment.DownloadFragment;
 import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
 import com.dehua.courseinformationsystem.utils.FragmentController;
+
+import java.util.zip.Inflater;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -69,6 +74,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headView = navigationView.getHeaderView(0);
+        ImageView imageView= (ImageView) headView.findViewById(R.id.user_image);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+            }
+        });
 
         //test Jpush SDK
         JPushInterface.setDebugMode(true);
