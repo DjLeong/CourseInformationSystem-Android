@@ -1,9 +1,6 @@
 package com.dehua.courseinformationsystem.mainactivity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,8 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,19 +21,15 @@ import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.constants.FragmentPosition;
 import com.dehua.courseinformationsystem.fragment.AnnouncementFragment;
 import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
-import com.dehua.courseinformationsystem.fragment.DownloadFragment;
+import com.dehua.courseinformationsystem.fragment.ScheduleFragment;
 import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
 import com.dehua.courseinformationsystem.utils.FragmentController;
-
-import java.util.zip.Inflater;
-
-import cn.jpush.android.api.JPushInterface;
 
 import cn.jpush.android.api.JPushInterface;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AnnouncementFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener,
-        DownloadFragment.OnFragmentInteractionListener {
+        ScheduleFragment.OnFragmentInteractionListener {
 
     private static MainActivity instance;
     private FragmentController controller;
@@ -149,7 +140,7 @@ public class MainActivity extends AppCompatActivity
                     toolbar.setTitle("Attendance");
                 }
                 break;
-            case R.id.nav_download:
+            case R.id.nav_schedule:
                 controller.showFragment(FragmentPosition.Download.ordinal());
                 if (toolbar != null) {
                     toolbar.setTitle("Download");
