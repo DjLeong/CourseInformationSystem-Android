@@ -1,4 +1,4 @@
-package com.dehua.courseinformationsystem.data;
+package com.dehua.courseinformationsystem.bean;
 
 /**
  * Created by dehua on 16/3/8 008.

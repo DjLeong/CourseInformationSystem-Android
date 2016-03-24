@@ -1,14 +1,35 @@
 package com.dehua.courseinformationsystem.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
+import com.dehua.courseinformationsystem.bean.ScheduleBean;
+import com.dehua.courseinformationsystem.mainactivity.MainActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -28,6 +49,15 @@ public class ScheduleFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private static final String TAG="ScheduleFragment";
+
+    private int itemHeight;
+    private int marTop;
+    private int marLeft;
+    private LinearLayout weekPanels[]=new LinearLayout[7];
+    private ArrayList scheduleData[]=new ArrayList[7];
+    private ArrayList<ScheduleBean> list=new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,13 +90,79 @@ public class ScheduleFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        for(int i=0;i<7;i++){
+            scheduleData[i]=new ArrayList<ScheduleBean>();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_schedule, container, false);
+        View view=inflater.inflate(R.layout.fragment_schedule, container, false);
+        itemHeight=getResources().getDimensionPixelSize(R.dimen.weekItemHeight);
+        marTop=getResources().getDimensionPixelSize(R.dimen.weekItemMarTop);
+        marLeft=getResources().getDimensionPixelSize(R.dimen.weekItemMarLeft);
+        getJSONVolley(view);
+        return view;
+    }
+
+    private void getJSONVolley(final View view) {
+        final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        String JSONUrl = "http://192.168.0.2/CourseInformationSystem-Server/GetJSON?bean=schedule";
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Gson gson = new Gson();
+                        Type listType = new TypeToken<ArrayList<ScheduleBean>>() {
+                        }.getType();
+                        list = gson.fromJson(response.toString(), listType);
+                        for(ScheduleBean scheduleBean:list){
+                            scheduleData[scheduleBean.getDay()].add(scheduleBean);
+                        }
+                        for (int i = 0; i < weekPanels.length; i++) {
+                            weekPanels[i]=(LinearLayout) view.findViewById(R.id.weekPanel_1 + i);
+                            initWeekPanel(weekPanels[i], scheduleData[i]);
+                        }
+                        Log.i(TAG,scheduleData[1].toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i(TAG, "volley error");
+                    }
+                }
+        );
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public void initWeekPanel(LinearLayout linearLayout,List<ScheduleBean>scheduleBeans){
+        if(linearLayout==null || scheduleBeans==null || scheduleBeans.size()<1)return;
+        Log.i("Msg", "初始化面板");
+        ScheduleBean pre=scheduleBeans.get(0);
+        for (int i = 0; i < scheduleBeans.size(); i++) {
+            ScheduleBean c =scheduleBeans.get(i);
+            TextView tv =new TextView(MainActivity.getInstance().getApplicationContext());
+            LinearLayout.LayoutParams lp =new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.FILL_PARENT ,
+                    itemHeight*c.getAmount()+marTop*(c.getAmount()-1));
+            if(i>0){
+                lp.setMargins(marLeft, (c.getTime()-(pre.getTime()+pre.getAmount()))*(itemHeight+marTop)+marTop, 0, 0);
+            }else{
+                lp.setMargins(marLeft, (c.getTime()-1)*(itemHeight+marTop)+marTop, 0, 0);
+            }
+            tv.setLayoutParams(lp);
+            tv.setGravity(Gravity.TOP);
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            tv.setTextSize(12);
+            tv.setSingleLine(false);
+            tv.setTextColor(getResources().getColor(R.color.courseTextColor));
+            tv.setText(c.getCourseName() + "\n" + c.getClassroom());
+                    tv.setBackgroundColor(Color.parseColor("#3F51B5"));
+            linearLayout.addView(tv);
+            pre=c;
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

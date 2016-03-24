@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dehua.courseinformationsystem.R;
-import com.dehua.courseinformationsystem.data.AnnouncementBean;
+import com.dehua.courseinformationsystem.bean.AnnouncementBean;
 
 import java.util.ArrayList;
 

@@ -131,19 +131,19 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_announcement:
                 controller.showFragment(FragmentPosition.Announcement.ordinal());
                 if (toolbar != null) {
-                    toolbar.setTitle("AnnouncementBean");
+                    toolbar.setTitle("公告栏");
                 }
                 break;
             case R.id.nav_attendance:
                 controller.showFragment(FragmentPosition.Attendance.ordinal());
                 if (toolbar != null) {
-                    toolbar.setTitle("Attendance");
+                    toolbar.setTitle("签到");
                 }
                 break;
             case R.id.nav_schedule:
                 controller.showFragment(FragmentPosition.Download.ordinal());
                 if (toolbar != null) {
-                    toolbar.setTitle("Download");
+                    toolbar.setTitle("课程表");
                 }
                 break;
         }
