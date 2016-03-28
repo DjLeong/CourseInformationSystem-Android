@@ -2,13 +2,21 @@ package com.dehua.courseinformationsystem.fragment;
 
 import android.content.Context;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dehua.courseinformationsystem.R;
+import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 
 
 /**
@@ -28,6 +36,8 @@ public class AttendanceFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private static final String TAG="AnnouncementFragment";
 
     private OnFragmentInteractionListener mListener;
 
@@ -66,7 +76,27 @@ public class AttendanceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_attendance, container, false);
+        View view=inflater.inflate(R.layout.fragment_attendance, container, false);
+        Button button= (Button) view.findViewById(R.id.attendance_button);
+        ProgressBar progressBar= (ProgressBar) view.findViewById(R.id.attendance_progress);
+        TextView textView= (TextView) view.findViewById(R.id.attendance_textView);
+        final String mac="c8:3a:35:38:83:b8";
+        final String SSID="Tenda_3883B8";
+        textView.setText("Tips:打开WIFI并连接\n\""+SSID+"\"\n后开始签到");
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WifiManager wifiManager=(WifiManager) MainActivity.getInstance().getSystemService(Context.WIFI_SERVICE);
+                WifiInfo wifiInfo=wifiManager.getConnectionInfo();
+                String macInfo=wifiInfo.getBSSID();
+                String SSIDINFO=wifiInfo.getSSID();
+                Log.i(TAG,macInfo);
+                if (macInfo.equals(mac)&&SSIDINFO.equals(SSID)){
+                    Toast.makeText(MainActivity.getInstance().getApplicationContext(),"开始签到",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

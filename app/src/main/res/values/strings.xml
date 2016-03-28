@@ -90,5 +90,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="begin_attendance">开始签到</string>
 
 </resources>
