@@ -15,8 +15,31 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
+import com.dehua.courseinformationsystem.bean.CourseBean;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -80,23 +103,86 @@ public class AttendanceFragment extends Fragment {
         Button button= (Button) view.findViewById(R.id.attendance_button);
         ProgressBar progressBar= (ProgressBar) view.findViewById(R.id.attendance_progress);
         TextView textView= (TextView) view.findViewById(R.id.attendance_textView);
-        final String mac="c8:3a:35:38:83:b8";
-        final String SSID="Tenda_3883B8";
         textView.setText("Tips:打开WIFI并连接\n\""+SSID+"\"\n后开始签到");
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WifiManager wifiManager=(WifiManager) MainActivity.getInstance().getSystemService(Context.WIFI_SERVICE);
-                WifiInfo wifiInfo=wifiManager.getConnectionInfo();
-                String macInfo=wifiInfo.getBSSID();
-                String SSIDINFO=wifiInfo.getSSID();
-                Log.i(TAG,macInfo);
-                if (macInfo.equals(mac)&&SSIDINFO.equals(SSID)){
-                    Toast.makeText(MainActivity.getInstance().getApplicationContext(),"开始签到",Toast.LENGTH_SHORT).show();
-                }
+                getJSONVolley();
             }
         });
         return view;
+    }
+    final String mac="c8:3a:35:38:83:b8";
+    final String SSID="Tenda_3883B8";
+
+    private void getJSONVolley() {
+        final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        String JSONUrl = "http://192.168.0.2/CourseInformationSystem-Server/GetJSON?bean=signIn";
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Gson gson = new Gson();
+                        Type type = new TypeToken<CourseBean>(){}.getType();
+                        CourseBean course=gson.fromJson(response.toString(), type);
+                        Log.i(TAG,course.getCourseName());
+                        WifiManager wifiManager = (WifiManager) MainActivity.getInstance().getSystemService(Context.WIFI_SERVICE);
+                        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                        String macInfo = wifiInfo.getBSSID();
+                        String SSIDINFO = wifiInfo.getSSID();
+                        Log.i(TAG, macInfo + " "+SSIDINFO+"");
+                        if (macInfo != null && SSIDINFO != null && macInfo.equals(mac) && SSIDINFO.equals("\""+SSID+"\"")) {
+                            signIn(course.getSignInCount(),course.getCourseName());
+                        } else {
+                            Toast.makeText(MainActivity.getInstance().getApplicationContext(), "请打开wifi", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.getInstance().getApplicationContext(), "签到未开始", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+        requestQueue.add(jsonRequest);
+    }
+
+    private void signIn(final int count, final String courseName){
+        Toast.makeText(MainActivity.getInstance().getApplicationContext(), "开始签到", Toast.LENGTH_SHORT).show();
+        final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        final String User_ID=MainActivity.getUser_ID();
+        String Url = "http://192.168.0.2/CourseInformationSystem-Server/SigninServlet";
+        StringRequest stringRequest= new StringRequest(Request.Method.POST, Url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("1")){
+                            Toast.makeText(MainActivity.getInstance().getApplicationContext(), "签到成功", Toast.LENGTH_SHORT).show();
+                        }else if (response.equals("2")){
+                            Toast.makeText(MainActivity.getInstance().getApplicationContext(), "请勿重复签到", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(MainActivity.getInstance().getApplicationContext(), "未知错误", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.getInstance().getApplicationContext(), "与服务器连接失败", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> map = new HashMap<String,String>();
+                map.put("courseName", courseName);
+                map.put("count", count+"");
+                map.put("stuID", User_ID);
+                return map;
+            }
+        };
+        requestQueue.add(stringRequest);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

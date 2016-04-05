@@ -1,6 +1,9 @@
 package com.dehua.courseinformationsystem.mainactivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -14,10 +17,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.constants.FragmentPosition;
@@ -33,8 +38,14 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AnnouncementFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener,
         ScheduleFragment.OnFragmentInteractionListener {
 
+    private static final String TAG="MainActivity";
+
     private static MainActivity instance;
     private FragmentController controller;
+
+    private SharedPreferences sharedPreferences;
+
+    private static String User_ID=null;
 
     //jPUSH test
     public static boolean isForeground = false;
@@ -69,13 +80,28 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         View headView = navigationView.getHeaderView(0);
-        ImageView imageView= (ImageView) headView.findViewById(R.id.user_image);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+
+        sharedPreferences=getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+        boolean LoginState=sharedPreferences.getBoolean("LoginState",false);
+        if(LoginState){
+            Log.i(TAG,"Login");
+            TextView user_name= (TextView) headView.findViewById(R.id.user_name);
+            User_ID=sharedPreferences.getString("UserID",null);
+            if(User_ID!=null){
+                user_name.setText(User_ID);
             }
-        });
+        }else{
+            Log.i(TAG,"Not Login");
+            ImageView imageView= (ImageView) headView.findViewById(R.id.user_image);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!sharedPreferences.getBoolean("LoginState",false)) {
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    }
+                }
+            });
+        }
 
         //test Jpush SDK
         JPushInterface.setDebugMode(true);
@@ -84,6 +110,9 @@ public class MainActivity extends AppCompatActivity
 
     public static MainActivity getInstance() {
         return instance;
+    }
+    public static String getUser_ID() {
+        return User_ID;
     }
 
     @Override
