@@ -41,6 +41,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".mainactivity.LoginActivity"
+            android:label="@string/title_activity_login" />
+        <activity
             android:name=".settingfragment.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".mainactivity.MainActivity">
@@ -48,9 +51,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".mainactivity.MainActivity" />
         </activity>
-        <activity
-            android:name=".mainactivity.LoginActivity"
-            android:label="@string/title_activity_login" />
 
         <!-- Rich push 核心功能 since 2.0.6 -->
         <activity

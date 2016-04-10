@@ -1,6 +1,7 @@
 package com.dehua.courseinformationsystem.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -28,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.CourseBean;
+import com.dehua.courseinformationsystem.constants.ServerAdderss;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -112,12 +114,13 @@ public class AttendanceFragment extends Fragment {
         });
         return view;
     }
-    final String mac="c8:3a:35:38:83:b8";
-    final String SSID="Tenda_3883B8";
+    final String mac="BC-96-80-1C-02-EC";
+    final String SSID="CourseIS";
 
     private void getJSONVolley() {
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
-        String JSONUrl = "http://192.168.0.2/CourseInformationSystem-Server/GetJSON?bean=signIn";
+        SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+        String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=signIn&id="+sharedPreferences.getString("UserID","");
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -132,7 +135,7 @@ public class AttendanceFragment extends Fragment {
                         String SSIDINFO = wifiInfo.getSSID();
                         Log.i(TAG, macInfo + " "+SSIDINFO+"");
                         if (macInfo != null && SSIDINFO != null && macInfo.equals(mac) && SSIDINFO.equals("\""+SSID+"\"")) {
-                            signIn(course.getSignInCount(),course.getCourseName());
+                            signIn(course.getSignInCount(),course.getCourseID());
                         } else {
                             Toast.makeText(MainActivity.getInstance().getApplicationContext(), "请打开wifi", Toast.LENGTH_SHORT).show();
                         }
@@ -148,11 +151,12 @@ public class AttendanceFragment extends Fragment {
         requestQueue.add(jsonRequest);
     }
 
-    private void signIn(final int count, final String courseName){
+    private void signIn(final int count, final int courseID){
         Toast.makeText(MainActivity.getInstance().getApplicationContext(), "开始签到", Toast.LENGTH_SHORT).show();
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
-        final String User_ID=MainActivity.getUser_ID();
-        String Url = "http://192.168.0.2/CourseInformationSystem-Server/SigninServlet";
+        SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+        final String User_ID=sharedPreferences.getString("UserID","");
+        String Url = ServerAdderss.getServerAddress()+"SigninServlet";
         StringRequest stringRequest= new StringRequest(Request.Method.POST, Url,
                 new Response.Listener<String>() {
                     @Override
@@ -176,7 +180,7 @@ public class AttendanceFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> map = new HashMap<String,String>();
-                map.put("courseName", courseName);
+                map.put("courseID", courseID+"");
                 map.put("count", count+"");
                 map.put("stuID", User_ID);
                 return map;

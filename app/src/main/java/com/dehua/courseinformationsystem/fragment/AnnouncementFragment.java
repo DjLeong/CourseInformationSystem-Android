@@ -1,6 +1,7 @@
 package com.dehua.courseinformationsystem.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.AnnouncementBean;
+import com.dehua.courseinformationsystem.constants.ServerAdderss;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.dehua.courseinformationsystem.utils.AnnouncementAdapter;
 import com.google.gson.Gson;
@@ -110,7 +112,7 @@ public class AnnouncementFragment extends Fragment {
         return view;
     }
 
-    private void RefreshData() {
+    public void RefreshData() {
         new AsyncTask<String,Void,String>(){
 
             @Override
@@ -132,7 +134,8 @@ public class AnnouncementFragment extends Fragment {
     private void getJSONVolley() {
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
 //        String JSONUrl = "http://172.16.112.131/CourseInformationSystem-Server/GetJSON";
-        String JSONUrl = "http://192.168.0.2/CourseInformationSystem-Server/GetJSON?bean=announcement";
+        SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+        String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=announcement&id="+sharedPreferences.getString("UserID","");
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
                 new Response.Listener<JSONArray>() {
                     @Override

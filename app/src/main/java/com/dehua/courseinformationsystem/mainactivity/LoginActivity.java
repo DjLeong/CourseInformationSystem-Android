@@ -51,6 +51,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.dehua.courseinformationsystem.R;
+import com.dehua.courseinformationsystem.constants.FragmentPosition;
+import com.dehua.courseinformationsystem.constants.ServerAdderss;
+import com.dehua.courseinformationsystem.utils.FragmentController;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -252,7 +255,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     postParams.deleteCharAt(postParams.length() - 1);
                 }
                 // 打开和URL之间的连接
-                URL url=new URL("http://192.168.0.2/CourseInformationSystem-Server/StuLoginServlet");
+                URL url=new URL(ServerAdderss.getServerAddress()+"StuLoginServlet");
                 connection= (HttpURLConnection) url.openConnection();
                 connection.setDoOutput(true);
                 connection.setDoInput(true);
@@ -324,6 +327,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             editor.putString("UserID", mUser);
             editor.putBoolean("LoginState", true);
             if(editor.commit()){
+                FragmentController controller = FragmentController.getInstance(MainActivity.getInstance(), R.id.content);
+                controller.reloadFragment();
+                controller.showFragment(FragmentPosition.Announcement.ordinal());
                 finish();
             }
         }

@@ -21,8 +21,14 @@ public class FragmentController {
     private ArrayList<Fragment> fragments;
     private static FragmentController controller;
 
+    public static void clearConrtoller(){
+        controller=null;
+    }
+
     public static FragmentController getInstance(FragmentActivity activity,int containerId) {
-        controller=new FragmentController(activity,containerId);
+        if(controller==null) {
+            controller = new FragmentController(activity, containerId);
+        }
         return controller;
     }
 
@@ -32,13 +38,29 @@ public class FragmentController {
         initFragment();
     }
 
-    private void initFragment() {
+    public void initFragment() {
         fragments=new ArrayList<Fragment>();
         fragments.add(new AnnouncementFragment());
         fragments.add(new AttendanceFragment());
         fragments.add(new ScheduleFragment());
-
         FragmentTransaction ft=fragmentManager.beginTransaction();
+        for(Fragment fragment:fragments){
+            ft.add(containerId,fragment);
+        }
+        ft.commitAllowingStateLoss();
+    }
+
+    public void reloadFragment(){
+        FragmentTransaction ft=fragmentManager.beginTransaction();
+        for(Fragment fragment:fragments){
+            if(fragment!=null){
+                ft.remove(fragment);
+            }
+        }
+        fragments=new ArrayList<Fragment>();
+        fragments.add(new AnnouncementFragment());
+        fragments.add(new AttendanceFragment());
+        fragments.add(new ScheduleFragment());
         for(Fragment fragment:fragments){
             ft.add(containerId,fragment);
         }

@@ -1,6 +1,7 @@
 package com.dehua.courseinformationsystem.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.ScheduleBean;
+import com.dehua.courseinformationsystem.constants.ServerAdderss;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -61,6 +63,8 @@ public class ScheduleFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private View view=null;
+
     public ScheduleFragment() {
         // Required empty public constructor
     }
@@ -98,7 +102,7 @@ public class ScheduleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_schedule, container, false);
+        view=inflater.inflate(R.layout.fragment_schedule, container, false);
         itemHeight=getResources().getDimensionPixelSize(R.dimen.weekItemHeight);
         marTop=getResources().getDimensionPixelSize(R.dimen.weekItemMarTop);
         marLeft=getResources().getDimensionPixelSize(R.dimen.weekItemMarLeft);
@@ -106,9 +110,10 @@ public class ScheduleFragment extends Fragment {
         return view;
     }
 
-    private void getJSONVolley(final View view) {
+    protected void getJSONVolley(final View view) {
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
-        String JSONUrl = "http://192.168.0.2/CourseInformationSystem-Server/GetJSON?bean=schedule";
+        SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+        String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=schedule&id="+sharedPreferences.getString("UserID","");
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
                 new Response.Listener<JSONArray>() {
                     @Override

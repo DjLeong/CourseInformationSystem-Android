@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences sharedPreferences;
 
     private static String User_ID=null;
+    private static boolean Login_State=false;
 
     //jPUSH test
     public static boolean isForeground = false;
@@ -57,18 +58,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        controller = FragmentController.getInstance(this, R.id.content);
-        controller.showFragment(FragmentPosition.Announcement.ordinal());
-
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -76,43 +65,47 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        sharedPreferences = getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
         View headView = navigationView.getHeaderView(0);
-
-        sharedPreferences=getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
-        boolean LoginState=sharedPreferences.getBoolean("LoginState",false);
-        if(LoginState){
-            Log.i(TAG,"Login");
-            TextView user_name= (TextView) headView.findViewById(R.id.user_name);
-            User_ID=sharedPreferences.getString("UserID",null);
-            if(User_ID!=null){
-                user_name.setText(User_ID);
-            }
-        }else{
-            Log.i(TAG,"Not Login");
-            ImageView imageView= (ImageView) headView.findViewById(R.id.user_image);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(!sharedPreferences.getBoolean("LoginState",false)) {
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    }
-                }
-            });
+        navigationView.setNavigationItemSelectedListener(this);
+        TextView user_name = (TextView) headView.findViewById(R.id.user_name);
+        User_ID = sharedPreferences.getString("UserID", null);
+        if (User_ID != null) {
+            user_name.setText(User_ID);
         }
 
         //test Jpush SDK
         JPushInterface.setDebugMode(true);
         JPushInterface.init(this);
+
+       Login_State = sharedPreferences.getBoolean("LoginState", false);
+
+        controller = FragmentController.getInstance(this, R.id.content);
+
+        if (Login_State) {
+            Log.i(TAG, "Login");
+            controller.showFragment(FragmentPosition.Announcement.ordinal());
+        } else {
+            Log.i(TAG, "Not Login");
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
     }
 
     public static MainActivity getInstance() {
         return instance;
     }
-    public static String getUser_ID() {
-        return User_ID;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FragmentController.clearConrtoller();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
