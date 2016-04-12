@@ -7,7 +7,7 @@ public class AnnouncementBean {
     private String id;
     private String time;
     private String download;
-    private String course;
+    private String courseName;
     private String title;
     private String content;
 
@@ -23,8 +23,8 @@ public class AnnouncementBean {
         this.download = download;
     }
 
-    public void setCourse(String course) {
-        this.course = course;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public void setTitle(String title) {
@@ -47,8 +47,8 @@ public class AnnouncementBean {
         return download;
     }
 
-    public String getCourse() {
-        return course;
+    public String getCourseName() {
+        return courseName;
     }
 
     public String getTitle() {

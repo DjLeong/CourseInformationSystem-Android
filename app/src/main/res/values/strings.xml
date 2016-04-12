@@ -65,6 +65,8 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
+
+    <string name="nav_homepage">主页</string>
     <string name="announcement">公告栏</string>
     <string name="attendance">签到</string>
     <string name="schedule">课程表</string>
@@ -95,5 +97,8 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_activity_course_detail">CourseDetail</string>
 
 </resources>

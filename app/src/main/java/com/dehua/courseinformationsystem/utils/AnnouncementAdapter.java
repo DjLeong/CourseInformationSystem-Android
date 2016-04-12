@@ -57,7 +57,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AnnouncementItemHolder vh = (AnnouncementItemHolder) holder;
         AnnouncementBean announcement = announcementList.get(position);
-        vh.getCourse().setText(announcement.getCourse());
+        vh.getCourse().setText(announcement.getCourseName());
         vh.getTitle().setText(announcement.getTitle());
         vh.getContent().setText(announcement.getContent());
     }

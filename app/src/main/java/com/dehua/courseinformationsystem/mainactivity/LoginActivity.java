@@ -329,7 +329,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if(editor.commit()){
                 FragmentController controller = FragmentController.getInstance(MainActivity.getInstance(), R.id.content);
                 controller.reloadFragment();
-                controller.showFragment(FragmentPosition.Announcement.ordinal());
+                controller.showFragment(FragmentPosition.HomePage.ordinal());
                 finish();
             }
         }

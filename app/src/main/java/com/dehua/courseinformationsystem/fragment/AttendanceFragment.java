@@ -114,7 +114,7 @@ public class AttendanceFragment extends Fragment {
         });
         return view;
     }
-    final String mac="BC-96-80-1C-02-EC";
+    final String mac="7C-E9-D3-00-9C-26";
     final String SSID="CourseIS";
 
     private void getJSONVolley() {

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.dehua.courseinformationsystem.fragment.AnnouncementFragment;
 import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
+import com.dehua.courseinformationsystem.fragment.HomePageFragment;
 import com.dehua.courseinformationsystem.fragment.ScheduleFragment;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class FragmentController {
         fragments.add(new AnnouncementFragment());
         fragments.add(new AttendanceFragment());
         fragments.add(new ScheduleFragment());
+        fragments.add(new HomePageFragment());
         FragmentTransaction ft=fragmentManager.beginTransaction();
         for(Fragment fragment:fragments){
             ft.add(containerId,fragment);
@@ -61,6 +63,7 @@ public class FragmentController {
         fragments.add(new AnnouncementFragment());
         fragments.add(new AttendanceFragment());
         fragments.add(new ScheduleFragment());
+        fragments.add(new HomePageFragment());
         for(Fragment fragment:fragments){
             ft.add(containerId,fragment);
         }

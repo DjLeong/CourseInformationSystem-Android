@@ -28,6 +28,7 @@ import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.constants.FragmentPosition;
 import com.dehua.courseinformationsystem.fragment.AnnouncementFragment;
 import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
+import com.dehua.courseinformationsystem.fragment.HomePageFragment;
 import com.dehua.courseinformationsystem.fragment.ScheduleFragment;
 import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
 import com.dehua.courseinformationsystem.utils.FragmentController;
@@ -36,7 +37,7 @@ import cn.jpush.android.api.JPushInterface;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AnnouncementFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener,
-        ScheduleFragment.OnFragmentInteractionListener {
+        ScheduleFragment.OnFragmentInteractionListener,HomePageFragment.OnFragmentInteractionListener {
 
     private static final String TAG="MainActivity";
 
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity
 
         if (Login_State) {
             Log.i(TAG, "Login");
-            controller.showFragment(FragmentPosition.Announcement.ordinal());
+            controller.showFragment(FragmentPosition.HomePage.ordinal());
         } else {
             Log.i(TAG, "Not Login");
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -156,6 +157,12 @@ public class MainActivity extends AppCompatActivity
                 controller.showFragment(FragmentPosition.Announcement.ordinal());
                 if (toolbar != null) {
                     toolbar.setTitle("公告栏");
+                }
+                break;
+            case R.id.nav_homepage:
+                controller.showFragment(FragmentPosition.HomePage.ordinal());
+                if (toolbar != null) {
+                    toolbar.setTitle("课程信息系统");
                 }
                 break;
             case R.id.nav_attendance:
