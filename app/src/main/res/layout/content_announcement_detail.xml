@@ -8,10 +8,85 @@
     tools:context="com.dehua.courseinformationsystem.mainactivity.AnnouncementDetail"
     tools:showIn="@layout/activity_announcement_detail">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="test" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/announcement_detail_course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="test"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/announcement_detail_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:text="test"
+            android:textSize="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:id="@+id/announcement_detail_attach_layout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="附件："
+                android:textSize="20dp"
+                android:layout_marginLeft="@dimen/text_margin" />
+
+            <TextView
+                android:id="@+id/announcement_detail_attach"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/text_margin"
+                android:clickable="true"
+                android:textIsSelectable="true"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="test"
+                android:textColor="@color/colorAccent"
+                android:textSize="18dp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#FF909090" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:text="内容："
+            android:textSize="20dp"
+            android:layout_marginTop="@dimen/text_margin" />
+
+        <TextView
+            android:id="@+id/announcement_detail_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:singleLine="false"
+            android:text="test"
+            android:textSize="18dp" />
+
+    </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

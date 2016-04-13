@@ -9,16 +9,35 @@
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/announcement_item_course"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/announcement_item_course"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:text="test"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="test"
+                android:layout_gravity="right|top"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:id="@+id/announcement_item_time"
+                android:layout_marginRight="15dp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/announcement_item_title"
@@ -26,7 +45,8 @@
             android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/announcement_item_course"/>
+            android:layout_marginLeft="15dp"
+            android:text="test"/>
 
         <TextView
             android:ellipsize="end"
@@ -34,8 +54,9 @@
             android:id="@+id/announcement_item_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/announcement_item_title"/>
+            android:layout_marginLeft="15dp"
+            android:text="test"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </android.support.v7.widget.CardView>

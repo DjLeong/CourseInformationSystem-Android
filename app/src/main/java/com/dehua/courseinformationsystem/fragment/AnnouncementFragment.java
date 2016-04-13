@@ -1,6 +1,7 @@
 package com.dehua.courseinformationsystem.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -23,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.AnnouncementBean;
 import com.dehua.courseinformationsystem.constants.ServerAdderss;
+import com.dehua.courseinformationsystem.mainactivity.AnnouncementDetail;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.dehua.courseinformationsystem.utils.AnnouncementAdapter;
 import com.google.gson.Gson;
@@ -144,7 +146,18 @@ public class AnnouncementFragment extends Fragment {
                         Type listType = new TypeToken<ArrayList<AnnouncementBean>>() {
                         }.getType();
                         list = gson.fromJson(response.toString(), listType);
-                        mRecyclerView.setAdapter(new AnnouncementAdapter(list));
+                        AnnouncementAdapter adapter=new AnnouncementAdapter(list);
+                        mRecyclerView.setAdapter(adapter);
+                        adapter.setOnItemClickListener(new AnnouncementAdapter.OnRecyclerViewItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, AnnouncementBean announcementBean) {
+                                Intent intent=new Intent(MainActivity.getInstance(),AnnouncementDetail.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("announcement",announcementBean);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                            }
+                        });
                     }
                 },
                 new Response.ErrorListener() {

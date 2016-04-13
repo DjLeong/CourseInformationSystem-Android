@@ -33,7 +33,6 @@ public class HomepageAnnouncementAdapter extends RecyclerView.Adapter implements
 
     @Override
     public void onClick(View view) {
-        System.out.println("onclick");
         if (mOnItemClickListener != null) {
             mOnItemClickListener.onItemClick(view, (AnnouncementBean) view.getTag());
         }
