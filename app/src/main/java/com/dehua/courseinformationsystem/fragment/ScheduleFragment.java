@@ -59,7 +59,7 @@ public class ScheduleFragment extends Fragment {
     private int marLeft;
     private LinearLayout weekPanels[]=new LinearLayout[7];
     private ArrayList scheduleData[]=new ArrayList[7];
-    private ArrayList<ScheduleBean> list=new ArrayList<>();
+    private static ArrayList<ScheduleBean> list=new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
 
@@ -108,6 +108,10 @@ public class ScheduleFragment extends Fragment {
         marLeft=getResources().getDimensionPixelSize(R.dimen.weekItemMarLeft);
         getJSONVolley(view);
         return view;
+    }
+
+    public static ArrayList<ScheduleBean> getList() {
+        return list;
     }
 
     protected void getJSONVolley(final View view) {
@@ -162,7 +166,9 @@ public class ScheduleFragment extends Fragment {
             tv.setGravity(Gravity.CENTER_HORIZONTAL);
             tv.setTextSize(12);
             tv.setSingleLine(false);
-            tv.setTextColor(getResources().getColor(R.color.courseTextColor));
+            if(isAdded()) {
+                tv.setTextColor(getResources().getColor(R.color.courseTextColor));
+            }
             tv.setText(c.getCourseName() + "\n" + c.getClassroom());
                     tv.setBackgroundColor(Color.parseColor("#3F51B5"));
             linearLayout.addView(tv);

@@ -163,25 +163,30 @@
             android:value="523a5e762dc4738d9f52d741" />
         <!-- </>值来自开发者平台取得的AppKey -->
         <activity
-            android:name=".LoginActivity2"
-            android:label="@string/title_activity_login2" />
-        <activity
-            android:name=".mainactivity.ItemListActivity"
-            android:label="@string/title_item_list"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".mainactivity.ItemDetailActivity"
-            android:label="@string/title_item_detail"
-            android:parentActivityName=".mainactivity.ItemListActivity"
+            android:name=".mainactivity.CourseDetail"
+            android:label="@string/title_activity_course_detail"
+            android:parentActivityName=".mainactivity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dehua.courseinformationsystem.mainactivity.ItemListActivity" />
+                android:value=".mainactivity.MainActivity" />
         </activity>
         <activity
-            android:name=".mainactivity.CourseDetail"
-            android:label="@string/title_activity_course_detail"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".mainactivity.UserActivity"
+            android:parentActivityName=".mainactivity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".mainactivity.MainActivity" />
+        </activity>
+        <activity
+            android:name=".mainactivity.AnnouncementDetail"
+            android:label="@string/title_activity_announcement_detail"
+            android:parentActivityName=".mainactivity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dehua.courseinformationsystem.mainactivity.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

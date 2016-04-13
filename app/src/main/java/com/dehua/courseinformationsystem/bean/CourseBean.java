@@ -1,13 +1,25 @@
 package com.dehua.courseinformationsystem.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by dehua on 16/4/5 005.
  */
-public class CourseBean {
+public class CourseBean implements Serializable {
     private int courseID;
     private String courseName;
     private int signInStatus;
     private int signInCount;
+    private String courseIntro;
+
+    public String getCourseIntro() {
+        return courseIntro;
+    }
+
+    public void setCourseIntro(String courseIntro) {
+        this.courseIntro = courseIntro;
+    }
+
     public int getSignInStatus() {
         return signInStatus;
     }

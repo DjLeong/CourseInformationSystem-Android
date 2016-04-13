@@ -25,7 +25,9 @@ import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.AnnouncementBean;
 import com.dehua.courseinformationsystem.bean.Course2StuBean;
+import com.dehua.courseinformationsystem.bean.CourseBean;
 import com.dehua.courseinformationsystem.constants.ServerAdderss;
+import com.dehua.courseinformationsystem.mainactivity.AnnouncementDetail;
 import com.dehua.courseinformationsystem.mainactivity.CourseDetail;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.dehua.courseinformationsystem.utils.HomepageAnnouncementAdapter;
@@ -138,7 +140,7 @@ public class HomePageFragment extends Fragment {
     }
 
     AnnouncementBean announcement=new AnnouncementBean();
-    ArrayList<Course2StuBean> courselist=new ArrayList<>();
+    ArrayList<CourseBean> courselist=new ArrayList<>();
 
     private void getJSONVolley() {
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
@@ -153,8 +155,21 @@ public class HomePageFragment extends Fragment {
                         Type listType = new TypeToken<ArrayList<AnnouncementBean>>() {
                         }.getType();
                         ArrayList<AnnouncementBean> list = gson.fromJson(response.toString(), listType);
-                        announcement=list.get(0);
-                        mTitleRecyclerView.setAdapter(new HomepageAnnouncementAdapter(announcement));
+                        if(list.size()!=0) {
+                            announcement = list.get(0);
+                            HomepageAnnouncementAdapter adapter=new HomepageAnnouncementAdapter(announcement);
+                            mTitleRecyclerView.setAdapter(adapter);
+                            adapter.setOnItemClickListener(new HomepageAnnouncementAdapter.OnRecyclerViewItemClickListener(){
+                                @Override
+                                public void onItemClick(View view , AnnouncementBean announcementBean){
+                                    Intent intent=new Intent(MainActivity.getInstance(),AnnouncementDetail.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("announcement",announcementBean);
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                }
+                            });
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -169,15 +184,19 @@ public class HomePageFragment extends Fragment {
                     @Override
                     public void onResponse(JSONArray response) {
                         Gson gson = new Gson();
-                        Type listType = new TypeToken<ArrayList<Course2StuBean>>() {
+                        Type listType = new TypeToken<ArrayList<CourseBean>>() {
                         }.getType();
                         courselist = gson.fromJson(response.toString(), listType);
                         HomepageCourseAdapter adapter=new HomepageCourseAdapter(courselist);
                         mRecyclerView.setAdapter(adapter);
                         adapter.setOnItemClickListener(new HomepageCourseAdapter.OnRecyclerViewItemClickListener(){
                             @Override
-                            public void onItemClick(View view , String data){
-                                startActivity(new Intent(MainActivity.getInstance(), CourseDetail.class));
+                            public void onItemClick(View view , CourseBean courseBean){
+                                Intent intent=new Intent(MainActivity.getInstance(), CourseDetail.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("course",courseBean);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
                             }
                         });
                     }

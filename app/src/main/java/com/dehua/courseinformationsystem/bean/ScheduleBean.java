@@ -5,7 +5,7 @@ package com.dehua.courseinformationsystem.bean;
  */
 public class ScheduleBean {
     private int id;
-    private int courseID;
+    private int courseid;
     private int day;
     private int time;
     private int amount;
@@ -20,12 +20,12 @@ public class ScheduleBean {
         this.id = id;
     }
 
-    public int getCourseID() {
-        return courseID;
+    public int getCourseid() {
+        return courseid;
     }
 
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
+    public void setCourseid(int courseid) {
+        this.courseid = courseid;
     }
 
     public int getDay() {

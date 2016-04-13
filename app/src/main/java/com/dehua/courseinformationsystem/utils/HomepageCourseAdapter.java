@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.AnnouncementBean;
 import com.dehua.courseinformationsystem.bean.Course2StuBean;
+import com.dehua.courseinformationsystem.bean.CourseBean;
 
 import java.util.ArrayList;
 
@@ -19,10 +20,10 @@ public class HomepageCourseAdapter extends RecyclerView.Adapter implements View.
     private static final int NORMAL_ITEM = 1;
     private static final int NORMAL_ITEM_TITLE= 0;
 
-    private ArrayList<Course2StuBean> DataList;
+    private ArrayList<CourseBean> DataList;
     private int size;
 
-    public HomepageCourseAdapter(ArrayList<Course2StuBean> courseList){
+    public HomepageCourseAdapter(ArrayList<CourseBean> courseList){
         DataList=courseList;
         size=DataList.size()+2;
     }
@@ -42,13 +43,13 @@ public class HomepageCourseAdapter extends RecyclerView.Adapter implements View.
 
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
     public static interface OnRecyclerViewItemClickListener {
-        void onItemClick(View view , String data);
+        void onItemClick(View view , CourseBean courseBean);
     }
 
     @Override
     public void onClick(View view) {
         if (mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(view,(String)view.getTag());
+            mOnItemClickListener.onItemClick(view,(CourseBean) view.getTag());
         }
     }
 
@@ -90,9 +91,9 @@ public class HomepageCourseAdapter extends RecyclerView.Adapter implements View.
 
     private void bindNormalItem(RecyclerView.ViewHolder holder, int position) {
         NormalItemHolder normalItemHolder= (NormalItemHolder) holder;
-        Course2StuBean course2stubean=DataList.get(position-2);
-        normalItemHolder.Title.setText(course2stubean.getCourseName());
-        holder.itemView.setTag(course2stubean.getCourseName());
+        CourseBean coursebean=DataList.get(position-2);
+        normalItemHolder.Title.setText(coursebean.getCourseName());
+        holder.itemView.setTag(coursebean);
     }
 
     public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {

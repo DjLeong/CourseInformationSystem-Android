@@ -7,11 +7,61 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.dehua.courseinformationsystem.mainactivity.CourseDetail"
     tools:showIn="@layout/activity_course_detail">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="test" />
+        android:singleLine="false"
+        android:id="@+id/course_detail_id"
+        android:textSize="17dp"
+        android:text=""
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin"
+        android:layout_marginTop="@dimen/text_margin" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:text="上课时间及地点："
+        android:textSize="17dp"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:id="@+id/course_detail_schedule"
+        android:text=""
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:text="课程介绍："
+        android:textSize="17dp"
+        android:textIsSelectable="false"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:id="@+id/course_detail_intro"
+        android:text=""
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin" />
+
+    </LinearLayout>
+
+
 
 </android.support.v4.widget.NestedScrollView>

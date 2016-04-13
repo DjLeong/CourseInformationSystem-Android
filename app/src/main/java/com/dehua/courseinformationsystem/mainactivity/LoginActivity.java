@@ -224,6 +224,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mUser;
         private final String mPassword;
+        private String check=null;
 
         UserLoginTask(String user, String password) {
             mUser = user;
@@ -236,7 +237,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             HttpURLConnection connection = null;
             PrintWriter printWriter=null;
             BufferedReader bufferedReader=null;
-            boolean check=false;
             try {
                 Map<String, String> requestParamsMap = new HashMap<String, String>();
                 requestParamsMap.put("id", mUser);
@@ -274,7 +274,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 while ((line = bufferedReader.readLine()) != null) {
                     responseResult.append(line);
                 }
-                check=responseResult.toString().equals("1");
+                check=responseResult.toString();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -293,7 +293,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
 
             }
-            if(check) {
+            if(!check.equals("null")) {
                 return true;
             }else{
                 return false;
@@ -326,10 +326,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             user_name.setText(mUser);
             editor.putString("UserID", mUser);
             editor.putBoolean("LoginState", true);
+            editor.putString("UserName",check);
             if(editor.commit()){
                 FragmentController controller = FragmentController.getInstance(MainActivity.getInstance(), R.id.content);
-                controller.reloadFragment();
+//                controller.reloadFragment();
                 controller.showFragment(FragmentPosition.HomePage.ordinal());
+                MainActivity.setController(controller);
                 finish();
             }
         }

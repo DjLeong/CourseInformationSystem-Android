@@ -1,9 +1,11 @@
 package com.dehua.courseinformationsystem.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by dehua on 16/3/8 008.
  */
-public class AnnouncementBean {
+public class AnnouncementBean implements Serializable{
     private String id;
     private String time;
     private String download;

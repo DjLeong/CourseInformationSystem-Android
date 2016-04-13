@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -42,7 +43,8 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG="MainActivity";
 
     private static MainActivity instance;
-    private FragmentController controller;
+
+    private static FragmentController controller;
 
     private SharedPreferences sharedPreferences;
 
@@ -76,17 +78,31 @@ public class MainActivity extends AppCompatActivity
         if (User_ID != null) {
             user_name.setText(User_ID);
         }
+        ImageView imageView= (ImageView) headView.findViewById(R.id.user_image);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,UserActivity.class));
+            }
+        });
 
-        //test Jpush SDK
-        JPushInterface.setDebugMode(true);
-        JPushInterface.init(this);
+        new AsyncTask<String, Float, String>() {
+
+            @Override
+            protected String doInBackground(String... strings) {
+                System.out.println("jpush init in background");
+                //test Jpush SDK
+                JPushInterface.setDebugMode(true);
+                JPushInterface.init(MainActivity.getInstance());
+                return null;
+            }
+        }.execute();
 
        Login_State = sharedPreferences.getBoolean("LoginState", false);
 
-        controller = FragmentController.getInstance(this, R.id.content);
-
         if (Login_State) {
             Log.i(TAG, "Login");
+            controller = FragmentController.getInstance(this, R.id.content);
             controller.showFragment(FragmentPosition.HomePage.ordinal());
         } else {
             Log.i(TAG, "Not Login");
@@ -97,7 +113,9 @@ public class MainActivity extends AppCompatActivity
     public static MainActivity getInstance() {
         return instance;
     }
-
+    public static void setController(FragmentController controller) {
+        MainActivity.controller = controller;
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
