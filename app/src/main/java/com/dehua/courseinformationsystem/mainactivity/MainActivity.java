@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dehua.courseinformationsystem.R;
+import com.dehua.courseinformationsystem.Service.NotificationService;
 import com.dehua.courseinformationsystem.constants.FragmentPosition;
 import com.dehua.courseinformationsystem.fragment.AnnouncementFragment;
 import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
@@ -33,8 +34,13 @@ import com.dehua.courseinformationsystem.fragment.HomePageFragment;
 import com.dehua.courseinformationsystem.fragment.ScheduleFragment;
 import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
 import com.dehua.courseinformationsystem.utils.FragmentController;
+import com.dehua.courseinformationsystem.utils.PollingUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.api.TagAliasCallback;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AnnouncementFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener,
@@ -94,6 +100,17 @@ public class MainActivity extends AppCompatActivity
                 //test Jpush SDK
                 JPushInterface.setDebugMode(true);
                 JPushInterface.init(MainActivity.getInstance());
+                Set<String> tags=new HashSet<String>();
+                tags.add("1");
+                JPushInterface.setTags(MainActivity.getInstance(),tags,new TagAliasCallback() {
+                    @Override
+                    public void gotResult(int responseCode, String alias, Set<String> tags) {
+                        // TODO
+                        if(responseCode==0){
+                            Log.i("tags", tags.toString());
+                        }
+                    }
+                });
                 return null;
             }
         }.execute();
@@ -108,6 +125,9 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, "Not Login");
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
+
+        PollingUtils.stopPollingService(this, NotificationService.class, NotificationService.ACTION);
+        PollingUtils.startPollingService(this, 5, NotificationService.class, NotificationService.ACTION);
     }
 
     public static MainActivity getInstance() {

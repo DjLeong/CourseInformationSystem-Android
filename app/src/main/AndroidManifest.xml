@@ -187,6 +187,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dehua.courseinformationsystem.mainactivity.MainActivity" />
         </activity>
+
+        <service
+            android:name=".Service.NotificationService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.dehua.courseinformationsystem.Service.NotificationService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
