@@ -1,12 +1,15 @@
 package com.dehua.courseinformationsystem.mainactivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -52,13 +55,34 @@ public class CourseDetail extends AppCompatActivity {
         course_detail_intro.setText(courseIntro);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        if (fab != null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CourseDetail.this);
+                    // Get the layout inflater
+                    LayoutInflater inflater = CourseDetail.this.getLayoutInflater();
+
+                    // Inflate and set the layout for the dialog
+                    // Pass null as the parent view because its going in the dialog layout
+                    builder.setView(inflater.inflate(R.layout.msg_dialog, null))
+                            // Add action buttons
+                            .setPositiveButton("提交", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // sign in the user ...
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setTitle("留言");
+                    builder.create().show();
+                }
+            });
+        }
     }
 
     @Override

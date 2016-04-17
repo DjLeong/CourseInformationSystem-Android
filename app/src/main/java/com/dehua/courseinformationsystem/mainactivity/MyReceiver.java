@@ -1,6 +1,8 @@
 package com.dehua.courseinformationsystem.mainactivity;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.List;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -45,12 +48,18 @@ public class MyReceiver extends BroadcastReceiver {
         } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
             Log.d(TAG, "[MyReceiver] 用户点击打开了通知");
             
-//        	//打开自定义的Activity
-//        	Intent i = new Intent(context, TestActivity.class);
-//        	i.putExtras(bundle);
-//        	//i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        	i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
-//        	context.startActivity(i);
+        	//打开自定义的Activity
+        	Intent i = new Intent(Intent.ACTION_MAIN);
+			i.setClass(context,MainActivity.class);
+        	i.putExtras(bundle);
+        	//i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			i.addCategory(Intent.CATEGORY_LAUNCHER);
+        	i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
+			if(isApplicationBroughtToBackground(MainActivity.getInstance())){
+				context.startActivity(i);
+			}else {
+
+			}
         	
         } else if (JPushInterface.ACTION_RICHPUSH_CALLBACK.equals(intent.getAction())) {
             Log.d(TAG, "[MyReceiver] 用户收到到RICH PUSH CALLBACK: " + bundle.getString(JPushInterface.EXTRA_EXTRA));
@@ -62,6 +71,21 @@ public class MyReceiver extends BroadcastReceiver {
         } else {
         	Log.d(TAG, "[MyReceiver] Unhandled intent - " + intent.getAction());
         }
+	}
+
+	public boolean isApplicationBroughtToBackground(Context context) {
+		ActivityManager am = (ActivityManager) context
+				.getSystemService(Context.ACTIVITY_SERVICE);
+		List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+		if (tasks != null && !tasks.isEmpty()) {
+			ComponentName topActivity = tasks.get(0).topActivity;
+			Log.i(TAG, "topActivity:" + topActivity.flattenToString());
+			Log.i(TAG, "topActivity:" + topActivity.flattenToString());
+			if (!topActivity.getPackageName().equals(context.getPackageName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// 打印所有的 intent extra 数据

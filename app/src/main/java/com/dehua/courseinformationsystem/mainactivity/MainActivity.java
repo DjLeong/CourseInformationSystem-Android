@@ -1,17 +1,12 @@
 package com.dehua.courseinformationsystem.mainactivity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -25,9 +20,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.Service.NotificationService;
+import com.dehua.courseinformationsystem.bean.CourseBean;
 import com.dehua.courseinformationsystem.constants.FragmentPosition;
+import com.dehua.courseinformationsystem.constants.ServerAdderss;
 import com.dehua.courseinformationsystem.fragment.AnnouncementFragment;
 import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
 import com.dehua.courseinformationsystem.fragment.HomePageFragment;
@@ -35,7 +38,13 @@ import com.dehua.courseinformationsystem.fragment.ScheduleFragment;
 import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
 import com.dehua.courseinformationsystem.utils.FragmentController;
 import com.dehua.courseinformationsystem.utils.PollingUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -92,35 +101,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        new AsyncTask<String, Float, String>() {
-
-            @Override
-            protected String doInBackground(String... strings) {
-                System.out.println("jpush init in background");
-                //test Jpush SDK
-                JPushInterface.setDebugMode(true);
-                JPushInterface.init(MainActivity.getInstance());
-                Set<String> tags=new HashSet<String>();
-                tags.add("1");
-                JPushInterface.setTags(MainActivity.getInstance(),tags,new TagAliasCallback() {
-                    @Override
-                    public void gotResult(int responseCode, String alias, Set<String> tags) {
-                        // TODO
-                        if(responseCode==0){
-                            Log.i("tags", tags.toString());
-                        }
-                    }
-                });
-                return null;
-            }
-        }.execute();
-
        Login_State = sharedPreferences.getBoolean("LoginState", false);
 
         if (Login_State) {
             Log.i(TAG, "Login");
             controller = FragmentController.getInstance(this, R.id.content);
             controller.showFragment(FragmentPosition.HomePage.ordinal());
+            initJpush();
         } else {
             Log.i(TAG, "Not Login");
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -128,6 +115,58 @@ public class MainActivity extends AppCompatActivity
 
         PollingUtils.stopPollingService(this, NotificationService.class, NotificationService.ACTION);
         PollingUtils.startPollingService(this, 5, NotificationService.class, NotificationService.ACTION);
+    }
+
+    public static void initJpush(){
+        new AsyncTask<String, Float, String>() {
+            @Override
+            protected String doInBackground(String... strings) {
+                //test Jpush SDK
+                JPushInterface.setDebugMode(true);
+                JPushInterface.init(MainActivity.getInstance());
+                getScheduleJSONVolley();
+                return null;
+            }
+        }.execute();
+    }
+
+    private  static ArrayList<CourseBean> list=new ArrayList<CourseBean>();
+
+    protected static void getScheduleJSONVolley() {
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+        String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=course&id="+sharedPreferences.getString("UserID","");
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Gson gson = new Gson();
+                        Type listType = new TypeToken<ArrayList<CourseBean>>() {
+                        }.getType();
+                        list = gson.fromJson(response.toString(), listType);
+                        Set<String> tags=new HashSet<String>();
+                        for(CourseBean courseBean:list){
+                            tags.add(courseBean.getCourseID()+"");
+                        }
+                        JPushInterface.setTags(MainActivity.getInstance(),tags,new TagAliasCallback() {
+                            @Override
+                            public void gotResult(int responseCode, String alias, Set<String> tags) {
+                                // TODO
+                                if(responseCode==0){
+                                    Log.i("tags", tags.toString());
+                                }
+                            }
+                        });
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i(TAG, "volley error");
+                    }
+                }
+        );
+        requestQueue.add(jsonArrayRequest);
     }
 
     public static MainActivity getInstance() {

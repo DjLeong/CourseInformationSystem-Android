@@ -332,6 +332,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //                controller.reloadFragment();
                 controller.showFragment(FragmentPosition.HomePage.ordinal());
                 MainActivity.setController(controller);
+                MainActivity.initJpush();
                 finish();
             }
         }
