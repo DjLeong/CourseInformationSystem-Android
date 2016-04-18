@@ -29,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.CourseBean;
+import com.dehua.courseinformationsystem.bean.SignSettingBean;
 import com.dehua.courseinformationsystem.constants.ServerAdderss;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.google.gson.Gson;
@@ -104,20 +105,46 @@ public class AttendanceFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_attendance, container, false);
         Button button= (Button) view.findViewById(R.id.attendance_button);
         ProgressBar progressBar= (ProgressBar) view.findViewById(R.id.attendance_progress);
-        TextView textView= (TextView) view.findViewById(R.id.attendance_textView);
-        textView.setText("Tips:打开WIFI并连接\n\""+SSID+"\"\n后开始签到");
+        final SignSettingBean signSettingBean=new SignSettingBean();
+        getSignSetting(view,signSettingBean);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getJSONVolley();
+                signInVerify(signSettingBean.getMac(),signSettingBean.getSSID());
             }
         });
         return view;
     }
-    final String mac="7C-E9-D3-00-9C-26";
-    final String SSID="CourseIS";
 
-    private void getJSONVolley() {
+    private void getSignSetting(final View view,final SignSettingBean SignSettingBean){
+        final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=signsetting";
+        JsonObjectRequest jsonRequest=new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Gson gson = new Gson();
+                        Type type = new TypeToken<SignSettingBean>(){}.getType();
+                        SignSettingBean signSettingBean=gson.fromJson(response.toString(), type);
+                        String mac = signSettingBean.getMac();
+                        String SSID = signSettingBean.getSSID();
+                        TextView textView= (TextView) view.findViewById(R.id.attendance_textView);
+                        textView.setText("Tips:打开WIFI并连接\n\""+SSID+"\"\n后开始签到");
+                        SignSettingBean.setMac(mac);
+                        SignSettingBean.setSSID(SSID);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("volley error");
+                    }
+                }
+        );
+        requestQueue.add(jsonRequest);
+    }
+
+    private void signInVerify(final String mac,final String SSID) {
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
         SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
         String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=signIn&id="+sharedPreferences.getString("UserID","");
