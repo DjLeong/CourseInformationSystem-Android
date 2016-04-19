@@ -102,21 +102,46 @@ public class AttendanceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_attendance, container, false);
+        final View view=inflater.inflate(R.layout.fragment_attendance, container, false);
         Button button= (Button) view.findViewById(R.id.attendance_button);
-        ProgressBar progressBar= (ProgressBar) view.findViewById(R.id.attendance_progress);
-        final SignSettingBean signSettingBean=new SignSettingBean();
-        getSignSetting(view,signSettingBean);
+        final ProgressBar progressBar= (ProgressBar) view.findViewById(R.id.attendance_progress);
+        initSignSetting(view);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signInVerify(signSettingBean.getMac(),signSettingBean.getSSID());
+                progressBar.setVisibility(View.VISIBLE);
+                getSignSetting(view,progressBar);
             }
         });
         return view;
     }
 
-    private void getSignSetting(final View view,final SignSettingBean SignSettingBean){
+    private void initSignSetting(final View view){
+        final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=signsetting";
+        JsonObjectRequest jsonRequest=new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Gson gson = new Gson();
+                        Type type = new TypeToken<SignSettingBean>(){}.getType();
+                        SignSettingBean signSettingBean=gson.fromJson(response.toString(), type);
+                        String SSID = signSettingBean.getSSID();
+                        TextView textView= (TextView) view.findViewById(R.id.attendance_textView);
+                        textView.setText("Tips:打开WIFI并连接\n\""+SSID+"\"\n后开始签到");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("volley error");
+                    }
+                }
+        );
+        requestQueue.add(jsonRequest);
+    }
+
+    private void getSignSetting(final View view,final ProgressBar progressBar){
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
         String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=signsetting";
         JsonObjectRequest jsonRequest=new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
@@ -130,8 +155,7 @@ public class AttendanceFragment extends Fragment {
                         String SSID = signSettingBean.getSSID();
                         TextView textView= (TextView) view.findViewById(R.id.attendance_textView);
                         textView.setText("Tips:打开WIFI并连接\n\""+SSID+"\"\n后开始签到");
-                        SignSettingBean.setMac(mac);
-                        SignSettingBean.setSSID(SSID);
+                        signInVerify(mac,SSID,progressBar);
                     }
                 },
                 new Response.ErrorListener() {
@@ -144,11 +168,11 @@ public class AttendanceFragment extends Fragment {
         requestQueue.add(jsonRequest);
     }
 
-    private void signInVerify(final String mac,final String SSID) {
+    private void signInVerify(final String mac,final String SSID,final ProgressBar progressBar) {
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
         SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
         String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=signIn&id="+sharedPreferences.getString("UserID","");
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
+        final JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -161,10 +185,11 @@ public class AttendanceFragment extends Fragment {
                         String macInfo = wifiInfo.getBSSID();
                         String SSIDINFO = wifiInfo.getSSID();
                         Log.i(TAG, macInfo + " "+SSIDINFO+"");
+                        Log.i(TAG,mac+" "+SSID);
                         if (macInfo != null && SSIDINFO != null && macInfo.equals(mac) && SSIDINFO.equals("\""+SSID+"\"")) {
-                            signIn(course.getSignInCount(),course.getCourseID());
+                            signIn(course.getSignInCount(),course.getCourseID(),progressBar);
                         } else {
-                            Toast.makeText(MainActivity.getInstance().getApplicationContext(), "请打开wifi", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.getInstance().getApplicationContext(), "wifi验证失败", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -178,7 +203,7 @@ public class AttendanceFragment extends Fragment {
         requestQueue.add(jsonRequest);
     }
 
-    private void signIn(final int count, final int courseID){
+    private void signIn(final int count, final int courseID,final ProgressBar progressBar){
         Toast.makeText(MainActivity.getInstance().getApplicationContext(), "开始签到", Toast.LENGTH_SHORT).show();
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
         SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
@@ -195,6 +220,7 @@ public class AttendanceFragment extends Fragment {
                         }else {
                             Toast.makeText(MainActivity.getInstance().getApplicationContext(), "未知错误", Toast.LENGTH_SHORT).show();
                         }
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 },
                 new Response.ErrorListener() {

@@ -193,9 +193,8 @@ public class HomePageFragment extends Fragment {
                             @Override
                             public void onItemClick(View view , CourseBean courseBean){
                                 Intent intent=new Intent(MainActivity.getInstance(), CourseDetail.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("course",courseBean);
-                                intent.putExtras(bundle);
+                                intent.putExtra("courseid",courseBean.getCourseID()+"");
+                                intent.putExtra("courseName",courseBean.getCourseName());
                                 startActivity(intent);
                             }
                         });

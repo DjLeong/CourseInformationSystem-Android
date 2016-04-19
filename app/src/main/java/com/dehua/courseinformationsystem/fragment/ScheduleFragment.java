@@ -1,6 +1,7 @@
 package com.dehua.courseinformationsystem.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.ScheduleBean;
 import com.dehua.courseinformationsystem.constants.ServerAdderss;
+import com.dehua.courseinformationsystem.mainactivity.CourseDetail;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -151,7 +153,7 @@ public class ScheduleFragment extends Fragment {
         Log.i("Msg", "初始化面板");
         ScheduleBean pre=scheduleBeans.get(0);
         for (int i = 0; i < scheduleBeans.size(); i++) {
-            ScheduleBean c =scheduleBeans.get(i);
+            final ScheduleBean c =scheduleBeans.get(i);
             TextView tv =new TextView(MainActivity.getInstance().getApplicationContext());
             LinearLayout.LayoutParams lp =new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.FILL_PARENT ,
@@ -165,7 +167,17 @@ public class ScheduleFragment extends Fragment {
             tv.setGravity(Gravity.TOP);
             tv.setGravity(Gravity.CENTER_HORIZONTAL);
             tv.setTextSize(12);
+            tv.setClickable(true);
             tv.setSingleLine(false);
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent=new Intent(MainActivity.getInstance(), CourseDetail.class);
+                    intent.putExtra("courseid",c.getCourseid()+"");
+                    intent.putExtra("courseName",c.getCourseName());
+                    startActivity(intent);
+                }
+            });
             if(isAdded()) {
                 tv.setTextColor(getResources().getColor(R.color.courseTextColor));
             }

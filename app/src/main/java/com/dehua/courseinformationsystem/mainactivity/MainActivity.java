@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity
 
     protected static void getScheduleJSONVolley() {
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
-        SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+        final SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
         String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=course&id="+sharedPreferences.getString("UserID","");
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
                 new Response.Listener<JSONArray>() {
@@ -154,6 +154,14 @@ public class MainActivity extends AppCompatActivity
                                 // TODO
                                 if(responseCode==0){
                                     Log.i("tags", tags.toString());
+                                }
+                            }
+                        });
+                        JPushInterface.setAlias(MainActivity.getInstance(), sharedPreferences.getString("UserID", ""), new TagAliasCallback() {
+                            @Override
+                            public void gotResult(int i, String s, Set<String> set) {
+                                if(i==0){
+                                    Log.i("Alias", s);
                                 }
                             }
                         });
