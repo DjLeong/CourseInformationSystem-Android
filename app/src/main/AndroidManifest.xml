@@ -33,6 +33,7 @@
         <activity
             android:name=".mainactivity.MainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +45,7 @@
             android:name=".mainactivity.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".settingfragment.SettingsActivity"
+            android:name=".mainactivity.PreferenceActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".mainactivity.MainActivity">
             <meta-data

@@ -4,8 +4,12 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -29,12 +33,16 @@ public class PollingUtils {
         long firstTime = SystemClock.elapsedRealtime();	// 开机之后到现在的运行时间(包括睡眠时间)
         long systemTime = System.currentTimeMillis();
 
+        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(MainActivity.getInstance());
+        int hour=sharedPreferences.getInt("pref_time_hour",22);
+        int min=sharedPreferences.getInt("pref_time_min",0);
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
 // 这里时区需要设置一下，不然会有8个小时的时间差
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR_OF_DAY, 22);
+        calendar.set(Calendar.MINUTE, min);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 // 选择的定时时间
@@ -50,11 +58,10 @@ public class PollingUtils {
 
         //触发服务的起始时间
 //        long triggerAtTime = SystemClock.elapsedRealtime();
-
         //使用AlarmManger的setRepeating方法设置定期执行的时间间隔（seconds秒）和需要执行的Service
         manager.setRepeating(AlarmManager.ELAPSED_REALTIME, firstTime,
                24*60*60 * 1000, pendingIntent);
-        Log.i("Service","start");
+        Log.i("Service","start at "+hour+":"+min);
     }
 
     //停止轮询服务

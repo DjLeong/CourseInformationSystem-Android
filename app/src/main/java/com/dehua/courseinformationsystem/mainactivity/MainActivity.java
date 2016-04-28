@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -35,7 +36,6 @@ import com.dehua.courseinformationsystem.fragment.AnnouncementFragment;
 import com.dehua.courseinformationsystem.fragment.AttendanceFragment;
 import com.dehua.courseinformationsystem.fragment.HomePageFragment;
 import com.dehua.courseinformationsystem.fragment.ScheduleFragment;
-import com.dehua.courseinformationsystem.settingfragment.SettingsActivity;
 import com.dehua.courseinformationsystem.utils.FragmentController;
 import com.dehua.courseinformationsystem.utils.PollingUtils;
 import com.google.gson.Gson;
@@ -113,8 +113,13 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
 
+        SharedPreferences pref_sharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
         PollingUtils.stopPollingService(this, NotificationService.class, NotificationService.ACTION);
-        PollingUtils.startPollingService(this, 5, NotificationService.class, NotificationService.ACTION);
+        boolean pref_notification=pref_sharedPreferences.getBoolean("pref_notification",true);
+        if(pref_notification) {
+            PollingUtils.startPollingService(this, 5, NotificationService.class, NotificationService.ACTION);
+            Log.i(TAG,"polling service start");
+        }
     }
 
     public static void initJpush(){
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected String doInBackground(String... strings) {
                 //test Jpush SDK
-                JPushInterface.setDebugMode(true);
+//                JPushInterface.setDebugMode(true);
                 JPushInterface.init(MainActivity.getInstance());
                 getScheduleJSONVolley();
                 return null;
@@ -224,7 +229,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
+            startActivity(new Intent(this, PreferenceActivity.class));
             return true;
         }
 

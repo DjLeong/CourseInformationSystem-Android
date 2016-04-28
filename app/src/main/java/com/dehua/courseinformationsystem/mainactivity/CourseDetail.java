@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -49,11 +51,13 @@ import java.util.Map;
 public class CourseDetail extends AppCompatActivity {
     ArrayList<CourseBean> courselist=new ArrayList<>();
     CourseBean courseBean=new CourseBean();
+    SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_detail);
 
+        swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.course_detail_refresh);
         Intent intent = this.getIntent();
         final String courseID = intent.getStringExtra("courseid");
         Toolbar toolbar = (Toolbar) findViewById(R.id.course_detail_toolbar);
@@ -63,7 +67,8 @@ public class CourseDetail extends AppCompatActivity {
 
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
         SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
-        final String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=course&id="+sharedPreferences.getString("UserID","");
+        final String userID=sharedPreferences.getString("UserID","");
+        final String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=course&id="+userID;
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, JSONUrl, null,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -136,7 +141,19 @@ public class CourseDetail extends AppCompatActivity {
                 }
         );
         requestQueue.add(jsonArrayRequest);
-        String JSONUrl1 = ServerAdderss.getServerAddress()+"GetJSON?bean=msg&id="+sharedPreferences.getString("UserID","")+"&courseid="+courseID;
+        myMsg(userID,courseID);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                RefreshData(userID,courseID);
+            }
+        });
+    }
+
+    protected  void myMsg(String userID,String courseID){
+        final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        String JSONUrl1 = ServerAdderss.getServerAddress()+"GetJSON?bean=msg&id="+userID+"&courseid="+courseID;
         JsonArrayRequest jsonArrayRequest1=new JsonArrayRequest(Request.Method.GET, JSONUrl1, null,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -182,6 +199,23 @@ public class CourseDetail extends AppCompatActivity {
                 }
         );
         requestQueue.add(jsonArrayRequest1);
+    }
+
+    private void RefreshData(final String userID, final String courseID) {
+        new AsyncTask<String,Void,String>(){
+
+            @Override
+            protected String doInBackground(String... params) {
+                myMsg(userID,courseID);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                swipeRefreshLayout.setRefreshing(false);
+                super.onPostExecute(s);
+            }
+        }.execute();
     }
 
     protected void leaveMsg(final String courseID,final String msg) {

@@ -161,6 +161,8 @@ public class AttendanceFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.getInstance().getApplicationContext(), "与服务器连接出错", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.INVISIBLE);
                         System.out.println("volley error");
                     }
                 }
@@ -197,6 +199,7 @@ public class AttendanceFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(MainActivity.getInstance().getApplicationContext(), "签到未开始", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 }
         );
@@ -227,6 +230,7 @@ public class AttendanceFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(MainActivity.getInstance().getApplicationContext(), "与服务器连接失败", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 }
         ){
