@@ -25,9 +25,14 @@
         android:visibility="invisible"
         android:id="@+id/attendance_progress"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_weight="0.90">
 
         <Button
             android:layout_width="100dp"
@@ -40,5 +45,16 @@
             android:textSize="18sp"
             android:textColor="#ffffff" />
     </RelativeLayout>
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/attendance_signinrecord"
+        android:text="最近签到："
+        android:layout_gravity="bottom"
+        android:gravity="center_vertical|center_horizontal"
+        android:background="#e0000000"
+        android:textColor="@color/abc_secondary_text_material_dark"
+        android:alpha="0.85"
+        android:textStyle="italic" />
+    </LinearLayout>
 </LinearLayout>

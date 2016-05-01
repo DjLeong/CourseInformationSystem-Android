@@ -30,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.dehua.courseinformationsystem.R;
 import com.dehua.courseinformationsystem.bean.CourseBean;
 import com.dehua.courseinformationsystem.bean.SignSettingBean;
+import com.dehua.courseinformationsystem.bean.SigninrecordBean;
 import com.dehua.courseinformationsystem.constants.ServerAdderss;
 import com.dehua.courseinformationsystem.mainactivity.MainActivity;
 import com.google.gson.Gson;
@@ -63,7 +64,7 @@ public class AttendanceFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private static final String TAG="AnnouncementFragment";
+    private static final String TAG="AttendanceFragment";
 
     private OnFragmentInteractionListener mListener;
 
@@ -106,6 +107,7 @@ public class AttendanceFragment extends Fragment {
         Button button= (Button) view.findViewById(R.id.attendance_button);
         final ProgressBar progressBar= (ProgressBar) view.findViewById(R.id.attendance_progress);
         initSignSetting(view);
+        setSigninRecord(view);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,6 +143,33 @@ public class AttendanceFragment extends Fragment {
         requestQueue.add(jsonRequest);
     }
 
+    private void setSigninRecord(final View view){
+        final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
+        SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
+        String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=latestsigninrecord&id="+sharedPreferences.getString("UserID","");
+        JsonObjectRequest jsonRequest=new JsonObjectRequest(Request.Method.GET, JSONUrl, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Gson gson = new Gson();
+                        Type type = new TypeToken<SigninrecordBean>(){}.getType();
+                        SigninrecordBean signinrecordBean=gson.fromJson(response.toString(), type);
+                        String time=signinrecordBean.getTime();
+                        String courseName=signinrecordBean.getCourseName();
+                        TextView textView= (TextView) view.findViewById(R.id.attendance_signinrecord);
+                        textView.setText("最近签到："+time+" "+courseName);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("volley error");
+                    }
+                }
+        );
+        requestQueue.add(jsonRequest);
+    }
+
     private void getSignSetting(final View view,final ProgressBar progressBar){
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
         String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=signsetting";
@@ -155,7 +184,7 @@ public class AttendanceFragment extends Fragment {
                         String SSID = signSettingBean.getSSID();
                         TextView textView= (TextView) view.findViewById(R.id.attendance_textView);
                         textView.setText("Tips:打开WIFI并连接\n\""+SSID+"\"\n后开始签到");
-                        signInVerify(mac,SSID,progressBar);
+                        signInVerify(view,mac,SSID,progressBar);
                     }
                 },
                 new Response.ErrorListener() {
@@ -170,7 +199,7 @@ public class AttendanceFragment extends Fragment {
         requestQueue.add(jsonRequest);
     }
 
-    private void signInVerify(final String mac,final String SSID,final ProgressBar progressBar) {
+    private void signInVerify(final View view,final String mac,final String SSID,final ProgressBar progressBar) {
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
         SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
         String JSONUrl = ServerAdderss.getServerAddress()+"GetJSON?bean=signIn&id="+sharedPreferences.getString("UserID","");
@@ -189,9 +218,10 @@ public class AttendanceFragment extends Fragment {
                         Log.i(TAG, macInfo + " "+SSIDINFO+"");
                         Log.i(TAG,mac+" "+SSID);
                         if (macInfo != null && SSIDINFO != null && macInfo.equals(mac) && SSIDINFO.equals("\""+SSID+"\"")) {
-                            signIn(course.getSignInCount(),course.getCourseID(),progressBar);
+                            signIn(view,course.getSignInCount(),course.getCourseID(),progressBar);
                         } else {
                             Toast.makeText(MainActivity.getInstance().getApplicationContext(), "wifi验证失败", Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
                 },
@@ -206,7 +236,7 @@ public class AttendanceFragment extends Fragment {
         requestQueue.add(jsonRequest);
     }
 
-    private void signIn(final int count, final int courseID,final ProgressBar progressBar){
+    private void signIn(final View view,final int count, final int courseID,final ProgressBar progressBar){
         Toast.makeText(MainActivity.getInstance().getApplicationContext(), "开始签到", Toast.LENGTH_SHORT).show();
         final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.getInstance());
         SharedPreferences sharedPreferences=MainActivity.getInstance().getSharedPreferences("LoginActivity", Context.MODE_PRIVATE);
@@ -223,6 +253,7 @@ public class AttendanceFragment extends Fragment {
                         }else {
                             Toast.makeText(MainActivity.getInstance().getApplicationContext(), "未知错误", Toast.LENGTH_SHORT).show();
                         }
+                        setSigninRecord(view);
                         progressBar.setVisibility(View.INVISIBLE);
                     }
                 },
